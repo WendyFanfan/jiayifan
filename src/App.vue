@@ -1,101 +1,55 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import Markdown from 'vue3-markdown-it';
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <a-layout class="layout">
+    <a-layout-header>
+      <div class="logo" />
+      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="horizontal" :style="{ lineHeight: '64px' }">
+        <a-menu-item key="home">
+          <router-link to="/">首页</router-link>
+        </a-menu-item>
+        <a-menu-item key="articles">
+          <router-link to="/articles">文章</router-link>
+        </a-menu-item>
+        <a-menu-item key="categories">
+          <router-link to="/categories">分类</router-link>
+        </a-menu-item>
+        <a-menu-item key="archive">
+          <router-link to="/archive">归档</router-link>
+        </a-menu-item>
+        <a-menu-item key="about">
+          <router-link to="/about">关于我</router-link>
+        </a-menu-item>
+        <a-menu-item key="resources">
+          <router-link to="/resources">推荐资源</router-link>
+        </a-menu-item>
+      </a-menu>
+    </a-layout-header>
 
-    <div class="wrapper">
-      <!-- <HelloWorld msg="You did it!" /> -->
-      <!-- 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav> -->
-      <Markdown :source="source" />
-    </div>
-  </header>
+    <a-layout-content style="padding: 0 50px">
+      <router-view></router-view>
+    </a-layout-content>
 
-
-  <!-- <RouterView /> -->
+    <a-layout-footer style="text-align: center">
+      ©2024 我的博客 Created by Vue3 & Ant Design Vue
+    </a-layout-footer>
+  </a-layout>
 </template>
-<script>
 
-export default {
-  components: {
-    Markdown
-  },
-  data() {
-    return {
-      source: '# Hello World!'
-    }
-  }
-}
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selectedKeys = ref(['home'])
 </script>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+.layout {
+  min-height: 100vh;
 }
 
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
 }
 </style>

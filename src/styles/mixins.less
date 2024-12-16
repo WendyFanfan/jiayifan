@@ -1,0 +1,69 @@
+// 响应式断点混入
+.responsive(@rules) {
+  @media only screen and (max-width: @screen-xs) {
+    @rules();
+  }
+}
+
+.responsive-sm(@rules) {
+  @media only screen and (max-width: @screen-sm) {
+    @rules();
+  }
+}
+
+.responsive-md(@rules) {
+  @media only screen and (max-width: @screen-md) {
+    @rules();
+  }
+}
+
+.responsive-lg(@rules) {
+  @media only screen and (max-width: @screen-lg) {
+    @rules();
+  }
+}
+
+// 文本溢出省略
+.text-ellipsis() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-ellipsis-multiple(@line: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @line;
+  overflow: hidden;
+}
+
+// flex布局助手
+.flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between() {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 阴影效果
+.box-shadow(@level: 1) {
+  & when (@level = 1) {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  & when (@level = 2) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  & when (@level = 3) {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// 过渡动画
+.transition(@property: all, @duration: 0.3s) {
+  transition: @property @duration ease-in-out;
+}

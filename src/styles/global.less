@@ -1,0 +1,106 @@
+@import './variables.less';
+@import './mixins.less';
+
+// 重置样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: @font-family;
+  font-size: @font-size-base;
+  line-height: @line-height-base;
+  color: @text-color;
+  background-color: @background-color;
+}
+
+// 响应式容器
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: @spacing-md;
+  padding-left: @spacing-md;
+
+  .responsive-lg({
+    max-width: @screen-lg;
+  });
+
+  .responsive-md({
+    max-width: @screen-md;
+  });
+
+  .responsive-sm({
+    max-width: 100%;
+    padding-right: @spacing-sm;
+    padding-left: @spacing-sm;
+  });
+}
+
+// 移动端适配
+.mobile-only {
+  display: none;
+  .responsive-md({
+    display: block;
+  });
+}
+
+.desktop-only {
+  display: block;
+  .responsive-md({
+    display: none;
+  });
+}
+
+// 通用布局类
+.page-container {
+  padding: @spacing-md 0;
+
+  .responsive-sm({
+    padding: @spacing-sm 0;
+  });
+}
+
+.card {
+  background: #fff;
+  border-radius: 2px;
+  .box-shadow(1);
+
+  .responsive-sm({
+    border-radius: 0;
+    box-shadow: none;
+  });
+}
+
+// 文章内容样式
+.article-content {
+  font-size: @font-size-lg;
+  line-height: 1.8;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: @heading-color;
+    margin: @spacing-lg 0 @spacing-md;
+  }
+
+  p {
+    margin-bottom: @spacing-md;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .responsive-sm({
+    font-size: @font-size-base;
+  });
+}
