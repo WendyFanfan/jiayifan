@@ -4,8 +4,8 @@
             <a-card :bordered="false">
                 <template #title>
                     <div class="category-header">
-                        <h2>{{ currentCategory || '所有分类' }}</h2>
-                        <p class="subtitle">共 {{ filteredArticles.length }} 篇文章</p>
+                        <h2>{{ currentCategory || $t('category.allCategories') }}</h2>
+                        <p class="subtitle">{{ $t('archive.total', { count: filteredArticles.length }) }}</p>
                     </div>
                 </template>
 

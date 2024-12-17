@@ -3,7 +3,7 @@
         <template #default>
             <a-card :bordered="false">
                 <a-tabs v-model:activeKey="activeTab">
-                    <a-tab-pane key="articles" tab="我的文章">
+                    <a-tab-pane key="articles" :tab="$t('user.articles')">
                         <a-list :data-source="userArticles" :loading="loading">
                             <template #header>
                                 <a-space>
@@ -11,11 +11,11 @@
                                         <template #icon>
                                             <PlusOutlined />
                                         </template>
-                                        写文章
+                                        {{ $t('article.writeArticle') }}
                                     </a-button>
                                     <a-radio-group v-model:value="articleStatus">
-                                        <a-radio-button value="published">已发布</a-radio-button>
-                                        <a-radio-button value="draft">草稿箱</a-radio-button>
+                                        <a-radio-button value="published">{{ $t('article.publish') }}</a-radio-button>
+                                        <a-radio-button value="draft">{{ $t('article.draft') }}</a-radio-button>
                                     </a-radio-group>
                                 </a-space>
                             </template>
@@ -24,15 +24,18 @@
                                     <a-list-item-meta :title="item.title" :description="item.date">
                                         <template #avatar>
                                             <a-tag :color="item.status === 'published' ? 'green' : 'orange'">
-                                                {{ item.status === 'published' ? '已发布' : '草稿' }}
+                                                {{ item.status === 'published' ? $t('article.publish') :
+                                                $t('article.draft') }}
                                             </a-tag>
                                         </template>
                                     </a-list-item-meta>
                                     <template #actions>
                                         <a-space>
-                                            <a-button type="link" @click="editArticle(item)">编辑</a-button>
-                                            <a-popconfirm title="确定要删除这篇文章吗？" @confirm="deleteArticle(item)">
-                                                <a-button type="link" danger>删除</a-button>
+                                            <a-button type="link" @click="editArticle(item)">{{ $t('common.edit')
+                                                }}</a-button>
+                                            <a-popconfirm :title="$t('article.deleteConfirm')"
+                                                @confirm="deleteArticle(item)">
+                                                <a-button type="link" danger>{{ $t('common.delete') }}</a-button>
                                             </a-popconfirm>
                                         </a-space>
                                     </template>
@@ -41,15 +44,15 @@
                         </a-list>
                     </a-tab-pane>
 
-                    <a-tab-pane key="comments" tab="我的评论">
+                    <a-tab-pane key="comments" :tab="$t('user.comments')">
                         <a-list :data-source="userComments" :loading="loading">
                             <template #renderItem="{ item }">
                                 <a-list-item>
                                     <a-comment :author="item.author" :content="item.content" :datetime="item.datetime">
                                         <template #actions>
-                                            <span>回复于: <a>{{ item.articleTitle }}</a></span>
+                                            <span>{{ $t('article.replyTo') }}: <a>{{ item.articleTitle }}</a></span>
                                             <a-button type="link" danger @click="deleteComment(item)">
-                                                删除
+                                                {{ $t('common.delete') }}
                                             </a-button>
                                         </template>
                                     </a-comment>
@@ -58,7 +61,7 @@
                         </a-list>
                     </a-tab-pane>
 
-                    <a-tab-pane key="favorites" tab="我的收藏">
+                    <a-tab-pane key="favorites" :tab="$t('user.favorites')">
                         <a-list :data-source="userFavorites" :loading="loading">
                             <template #renderItem="{ item }">
                                 <a-list-item>
@@ -69,7 +72,7 @@
                                     </a-list-item-meta>
                                     <template #actions>
                                         <a-button type="link" @click="removeFavorite(item)">
-                                            取消收藏
+                                            {{ $t('user.removeFavorite') }}
                                         </a-button>
                                     </template>
                                 </a-list-item>
@@ -82,15 +85,12 @@
 
         <template #sidebar>
             <a-card :bordered="false">
-                <template #cover>
-                    <!-- <img alt="cover" src="/profile-cover.jpg" /> -->
-                </template>
                 <template #actions>
                     <SettingOutlined key="setting" @click="$router.push('/settings')" />
                     <EditOutlined key="edit" />
                     <EllipsisOutlined key="ellipsis" />
                 </template>
-                <a-card-meta title="Jiayi Fan" description="前端开发工程师">
+                <a-card-meta :title="$t('user.profile')" :description="$t('profile.bio')">
                     <template #avatar>
                         <a-avatar src="/avatar.jpg" />
                     </template>
@@ -98,13 +98,13 @@
                 <div class="user-stats">
                     <a-row :gutter="16">
                         <a-col :span="8">
-                            <a-statistic title="文章" :value="42" />
+                            <a-statistic :title="$t('user.articles')" :value="42" />
                         </a-col>
                         <a-col :span="8">
-                            <a-statistic title="评论" :value="156" />
+                            <a-statistic :title="$t('user.comments')" :value="156" />
                         </a-col>
                         <a-col :span="8">
-                            <a-statistic title="收藏" :value="38" />
+                            <a-statistic :title="$t('user.favorites')" :value="38" />
                         </a-col>
                     </a-row>
                 </div>

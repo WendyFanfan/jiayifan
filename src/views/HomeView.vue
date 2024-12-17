@@ -6,7 +6,7 @@
         <a-card class="profile-card">
           <a-avatar :size="64" src="/avatar.jpg" />
           <h1>Jiayi Fan</h1>
-          <p>个人简介：热爱技术，热爱生活。专注于前端开发与技术分享。</p>
+          <p>{{ $t('profile.bio') }}</p>
           <a-space>
             <a-button type="primary" href="https://github.com/fanjiayi">
               <GithubOutlined />
@@ -22,7 +22,7 @@
 
       <!-- 最新文章列表 -->
       <a-col :span="16">
-        <a-card title="最新文章" :bordered="false">
+        <a-card :title="$t('article.latestPosts')" :bordered="false">
           <a-list :data-source="latestPosts" item-layout="vertical">
             <template #renderItem="{ item }">
               <a-list-item>

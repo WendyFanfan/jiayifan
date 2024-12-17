@@ -2,22 +2,22 @@
     <div class="article-detail">
         <a-row :gutter="[24, 24]">
             <a-col :span="16">
-                <a-card :bordered="false">
+                <a-card :bordered="false" :loading="loading">
                     <!-- 文章标题 -->
                     <h1 class="article-title">{{ article.title }}</h1>
 
                     <!-- 文章元信息 -->
                     <div class="article-meta">
                         <span>
-                            <CalendarOutlined /> {{ article.date }}
+                            <CalendarOutlined /> {{ $t('article.publishDate') }}: {{ article.date }}
                         </span>
                         <a-divider type="vertical" />
                         <span>
-                            <UserOutlined /> {{ article.author }}
+                            <UserOutlined /> {{ $t('article.author') }}: {{ article.author }}
                         </span>
                         <a-divider type="vertical" />
                         <span>
-                            <EyeOutlined /> {{ article.views }} 阅读
+                            <EyeOutlined /> {{ article.views }} {{ $t('article.views') }}
                         </span>
                     </div>
 
@@ -39,13 +39,13 @@
                                 <template #icon>
                                     <WeiboOutlined />
                                 </template>
-                                分享到微博
+                                {{ $t('article.shareToWeibo') }}
                             </a-button>
                             <a-button>
                                 <template #icon>
                                     <WechatOutlined />
                                 </template>
-                                分享到微信
+                                {{ $t('article.shareToWechat') }}
                             </a-button>
                         </a-space>
                     </div>
@@ -53,18 +53,19 @@
                     <!-- 评论区 -->
                     <a-divider />
                     <div class="comment-section">
-                        <h3>评论 ({{ article.comments.length }})</h3>
+                        <h3>{{ $t('article.comments') }} ({{ article.comments.length }})</h3>
                         <a-comment>
                             <template #avatar>
-                                <a-avatar src="/avatar.jpg" alt="Han Solo" />
+                                <a-avatar src="/avatar.jpg" :alt="$t('user.nickname')" />
                             </template>
                             <template #content>
                                 <a-form-item>
-                                    <a-textarea v-model:value="commentValue" :rows="4" />
+                                    <a-textarea v-model:value="commentValue" :rows="4"
+                                        :placeholder="$t('article.commentPlaceholder')" />
                                 </a-form-item>
                                 <a-form-item>
                                     <a-button type="primary" @click="handleSubmit">
-                                        添加评论
+                                        {{ $t('article.addComment') }}
                                     </a-button>
                                 </a-form-item>
                             </template>
@@ -76,7 +77,7 @@
                                     <a-comment :author="item.author" :avatar="item.avatar" :content="item.content"
                                         :datetime="item.datetime">
                                         <template #actions>
-                                            <span @click="replyTo(item)">回复</span>
+                                            <span @click="replyTo(item)">{{ $t('user.replyTo') }}</span>
                                         </template>
                                     </a-comment>
                                 </a-list-item>
@@ -89,17 +90,17 @@
             <a-col :span="8">
                 <!-- 作者信息 -->
                 <a-card :bordered="false">
-                    <template #title>关于作者</template>
+                    <template #title>{{ $t('article.aboutAuthor') }}</template>
                     <a-avatar :size="64" src="/avatar.jpg" />
-                    <h3>作者名字</h3>
-                    <p>作者简介：热爱技术，热爱分享。专注于前端开发与技术写作。</p>
+                    <h3>{{ article.author }}</h3>
+                    <p>{{ $t('article.authorBio') }}</p>
                     <a-button type="primary" block>
-                        关注作者
+                        {{ $t('article.followAuthor') }}
                     </a-button>
                 </a-card>
 
                 <!-- 相关文章 -->
-                <a-card title="相关文章" :bordered="false" style="margin-top: 16px">
+                <a-card :title="$t('article.relatedPosts')" :bordered="false" style="margin-top: 16px">
                     <a-list :data-source="relatedArticles" size="small">
                         <template #renderItem="{ item }">
                             <a-list-item>
@@ -116,6 +117,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import {
     CalendarOutlined,
     UserOutlined,
@@ -127,6 +130,8 @@ import {
 
 const route = useRoute()
 const commentValue = ref('')
+const { t } = useI18n()
+const loading = ref(true)
 
 const article = ref({
     id: 1,
@@ -159,8 +164,8 @@ const relatedArticles = ref([
 ])
 
 const handleSubmit = () => {
-    // 处理评论提交
     if (!commentValue.value.trim()) {
+        message.warning(t('article.commentRequired'))
         return
     }
 
@@ -181,7 +186,10 @@ const replyTo = (comment: any) => {
 onMounted(() => {
     // 获取文章详情
     console.log('文章ID:', route.params.id)
-    // TODO: 根据ID获取文章详情
+    // 模拟加载
+    setTimeout(() => {
+        loading.value = false
+    }, 1000)
 })
 </script>
 

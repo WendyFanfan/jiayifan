@@ -2,40 +2,40 @@
     <div class="markdown-editor">
         <div class="editor-header">
             <a-radio-group v-model:value="mode" button-style="solid">
-                <a-radio-button value="edit">编辑</a-radio-button>
-                <a-radio-button value="preview">预览</a-radio-button>
-                <a-radio-button value="split">分屏</a-radio-button>
+                <a-radio-button value="edit">{{ $t('editor.edit') }}</a-radio-button>
+                <a-radio-button value="preview">{{ $t('editor.preview') }}</a-radio-button>
+                <a-radio-button value="split">{{ $t('editor.split') }}</a-radio-button>
             </a-radio-group>
             <a-space>
-                <a-tooltip title="加粗">
+                <a-tooltip :title="$t('editor.bold')">
                     <a-button @click="insertMarkdown('**', '**')">
                         <template #icon>
                             <BoldOutlined />
                         </template>
                     </a-button>
                 </a-tooltip>
-                <a-tooltip title="斜体">
+                <a-tooltip :title="$t('editor.italic')">
                     <a-button @click="insertMarkdown('*', '*')">
                         <template #icon>
                             <ItalicOutlined />
                         </template>
                     </a-button>
                 </a-tooltip>
-                <a-tooltip title="链接">
+                <a-tooltip :title="$t('editor.link')">
                     <a-button @click="insertMarkdown('[', '](url)')">
                         <template #icon>
                             <LinkOutlined />
                         </template>
                     </a-button>
                 </a-tooltip>
-                <a-tooltip title="图片">
+                <a-tooltip :title="$t('editor.image')">
                     <a-button @click="insertMarkdown('![alt](', ')')">
                         <template #icon>
                             <PictureOutlined />
                         </template>
                     </a-button>
                 </a-tooltip>
-                <a-tooltip title="代码块">
+                <a-tooltip :title="$t('editor.code')">
                     <a-button @click="insertCodeBlock">
                         <template #icon>
                             <CodeOutlined />
@@ -47,11 +47,10 @@
 
         <div class="editor-content" :class="mode">
             <div v-show="mode !== 'preview'" class="editor-area">
-                <a-input.TextArea v-model:value="content" :rows="20" :placeholder="placeholder"
+                <a-input.TextArea v-model:value="content" :rows="20" :placeholder="$t('editor.placeholder')"
                     @keydown.tab.prevent="handleTab" />
             </div>
-            <div v-show="mode !== 'edit'" class="preview-area">
-                <markdown-it-vue :content="content" :options="markdownOptions" />
+            <div v-show="mode !== 'edit'" class="preview-area markdown-body" v-html="htmlContent">
             </div>
         </div>
     </div>
@@ -59,7 +58,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import MarkdownItVue from 'markdown-it'
+import { useI18n } from 'vue-i18n'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import {
     BoldOutlined,
@@ -71,16 +72,15 @@ import {
 
 const props = withDefaults(defineProps<{
     modelValue?: string
-    placeholder?: string
 }>(), {
-    modelValue: '',
-    placeholder: '请输入Markdown内容...'
+    modelValue: ''
 })
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void
 }>()
 
+const { t } = useI18n()
 const mode = ref<'edit' | 'preview' | 'split'>('edit')
 const content = computed({
     get: () => props.modelValue,
@@ -134,6 +134,25 @@ const handleTab = (e: KeyboardEvent) => {
         textarea.selectionStart = textarea.selectionEnd = start + 4
     })
 }
+
+const md = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+    breaks: true,
+    highlight: (str, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return hljs.highlight(str, { language: lang }).value
+            } catch (__) { }
+        }
+        return '' // 使用默认的转义
+    }
+})
+
+const htmlContent = computed(() => {
+    return md.render(content.value || '')
+})
 </script>
 
 <style lang="less" scoped>
@@ -188,5 +207,44 @@ const handleTab = (e: KeyboardEvent) => {
 .preview-area {
     padding: 12px 24px;
     overflow-y: auto;
+
+    :deep(.markdown-body) {
+        font-size: 16px;
+        line-height: 1.8;
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        p {
+            margin: 16px 0;
+        }
+
+        pre {
+            margin: 16px 0;
+            padding: 16px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+
+        code {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            background-color: rgba(27, 31, 35, 0.05);
+            border-radius: 6px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
 }
 </style>

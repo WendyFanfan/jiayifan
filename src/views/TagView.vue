@@ -1,7 +1,7 @@
 <template>
     <page-container>
         <template #default>
-            <a-card :bordered="false">
+            <a-card :bordered="false" :loading="loading">
                 <template #title>
                     <div class="tag-header">
                         <h2>
@@ -9,10 +9,10 @@
                                 <TagOutlined /> {{ currentTag }}
                             </template>
                             <template v-else>
-                                所有标签
+                                {{ $t('article.tags') }}
                             </template>
                         </h2>
-                        <p class="subtitle">共 {{ filteredArticles.length }} 篇文章</p>
+                        <p class="subtitle">{{ $t('archive.total', { count: filteredArticles.length }) }}</p>
                     </div>
                 </template>
 
@@ -21,7 +21,7 @@
         </template>
 
         <template #sidebar>
-            <a-card title="热门标签" :bordered="false">
+            <a-card :title="$t('article.tags')" :bordered="false">
                 <div class="tag-cloud">
                     <a-tag v-for="tag in sortedTags" :key="tag.name" :color="tag.color"
                         :class="{ active: currentTag === tag.name }" style="margin: 4px; cursor: pointer"
@@ -31,7 +31,7 @@
                 </div>
             </a-card>
 
-            <a-card title="相关分类" :bordered="false" style="margin-top: 16px">
+            <a-card :title="$t('article.category')" :bordered="false" style="margin-top: 16px">
                 <a-list :data-source="relatedCategories" size="small">
                     <template #renderItem="{ item }">
                         <a-list-item>
@@ -54,12 +54,19 @@ import { TagOutlined } from '@ant-design/icons-vue'
 import { useArticleStore } from '@/stores/article'
 import PageContainer from '@/components/PageContainer.vue'
 import ArticleList from '@/components/ArticleList.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const route = useRoute()
 const router = useRouter()
 const articleStore = useArticleStore()
+const loading = ref(true)
 
 const currentTag = ref(route.params.tag || '')
+
+// 模拟数据加载
+setTimeout(() => {
+    loading.value = false
+}, 1000)
 
 // 获取所有标签及其文章数量，并按数量排序
 const sortedTags = computed(() => {

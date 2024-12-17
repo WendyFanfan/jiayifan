@@ -1,9 +1,27 @@
 <template>
-    <a-list class="article-list" :data-source="articles" item-layout="vertical" size="large" :pagination="pagination">
+    <a-list class="article-list" :data-source="articles" item-layout="vertical" size="large" :loading="loading"
+        :pagination="{
+            ...pagination,
+            showTotal: (total) => $t('common.pagination.total', { total }),
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50'],
+            showQuickJumper: true,
+            defaultPageSize: 10,
+            locale: {
+                items_per_page: $t('common.pagination.pageSize', { size: '{pageSize}' }),
+                jump_to: $t('common.pagination.jump'),
+                page: $t('common.pagination.page'),
+                prev_page: $t('common.pagination.prev'),
+                next_page: $t('common.pagination.next')
+            }
+        }">
+        <template #loading>
+            <LoadingSpinner />
+        </template>
         <template #renderItem="{ item }">
             <a-list-item key="item.title">
                 <template #extra>
-                    <img width="272" alt="封面" :src="item.cover" />
+                    <img width="272" :alt="item.title" :src="item.cover" />
                 </template>
                 <a-list-item-meta :description="item.description">
                     <template #title>
@@ -16,7 +34,7 @@
                 <div class="article-excerpt">{{ item.excerpt }}</div>
                 <template #actions>
                     <span>
-                        <CalendarOutlined /> {{ item.date }}
+                        <CalendarOutlined /> {{ $t('article.publishDate') }}: {{ item.date }}
                     </span>
                     <span>
                         <FolderOutlined />
@@ -29,16 +47,25 @@
                         </span>
                     </span>
                     <span>
-                        <EyeOutlined /> {{ item.views }}
+                        <EyeOutlined /> {{ item.views }} {{ $t('article.views') }}
                     </span>
                 </template>
             </a-list-item>
+        </template>
+        <template #renderEmpty>
+            <div class="empty-content">
+                <a-empty :description="$t('common.noData')" />
+            </div>
         </template>
     </a-list>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { CalendarOutlined, FolderOutlined, TagsOutlined, EyeOutlined } from '@ant-design/icons-vue'
+import LoadingSpinner from './LoadingSpinner.vue'
+
+const { t } = useI18n()
 
 defineProps<{
     articles: Array<{
@@ -57,6 +84,7 @@ defineProps<{
         onChange: (page: number) => void
         pageSize: number
     }
+    loading?: boolean
 }>()
 </script>
 

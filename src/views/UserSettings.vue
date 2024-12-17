@@ -2,75 +2,84 @@
     <page-container>
         <a-card :bordered="false">
             <a-tabs v-model:activeKey="activeTab">
-                <a-tab-pane key="profile" tab="个人资料">
+                <a-tab-pane key="profile" :tab="$t('user.profile')">
                     <a-form :model="profileForm" layout="vertical">
-                        <a-form-item label="头像">
+                        <a-form-item :label="$t('user.avatar')">
                             <a-upload v-model:file-list="avatarList" name="avatar" list-type="picture-card"
                                 class="avatar-uploader" :show-upload-list="false" :before-upload="beforeAvatarUpload">
                                 <img v-if="profileForm.avatar" :src="profileForm.avatar" alt="avatar" />
                                 <div v-else>
                                     <plus-outlined />
-                                    <div style="margin-top: 8px">上传</div>
+                                    <div style="margin-top: 8px">{{ $t('common.upload') }}</div>
                                 </div>
                             </a-upload>
                         </a-form-item>
 
-                        <a-form-item label="昵称" required>
+                        <a-form-item :label="$t('user.nickname')" required>
                             <a-input v-model:value="profileForm.nickname" />
                         </a-form-item>
 
-                        <a-form-item label="个人简介">
+                        <a-form-item :label="$t('user.bio')">
                             <a-textarea v-model:value="profileForm.bio" :rows="4" />
                         </a-form-item>
 
-                        <a-form-item label="个人网站">
+                        <a-form-item :label="$t('user.website')">
                             <a-input v-model:value="profileForm.website" />
                         </a-form-item>
 
-                        <a-form-item label="所在地">
+                        <a-form-item :label="$t('user.location')">
                             <a-cascader v-model:value="profileForm.location" :options="locationOptions"
-                                placeholder="请选择所在地" />
+                                :placeholder="$t('user.selectLocation')" />
                         </a-form-item>
 
                         <a-form-item>
-                            <a-button type="primary" @click="saveProfile">保存修改</a-button>
+                            <a-button type="primary" @click="saveProfile">{{ $t('common.save') }}</a-button>
                         </a-form-item>
                     </a-form>
                 </a-tab-pane>
 
-                <a-tab-pane key="account" tab="账号设置">
+                <a-tab-pane key="account" :tab="$t('user.settings')">
                     <a-form :model="accountForm" layout="vertical">
-                        <a-form-item label="邮箱" required>
+                        <a-form-item :label="$t('user.email')" required>
                             <a-input v-model:value="accountForm.email" />
                             <template #extra>
-                                <a-tag v-if="accountForm.emailVerified" color="success">已验证</a-tag>
-                                <a-button v-else type="link" @click="verifyEmail">验证邮箱</a-button>
+                                <a-tag v-if="accountForm.emailVerified" color="success">
+                                    {{ $t('user.emailVerified') }}
+                                </a-tag>
+                                <a-button v-else type="link" @click="verifyEmail">
+                                    {{ $t('user.verifyEmail') }}
+                                </a-button>
                             </template>
                         </a-form-item>
 
-                        <a-form-item label="修改密码">
-                            <a-input-password v-model:value="accountForm.oldPassword" placeholder="当前密码" />
+                        <a-form-item :label="$t('user.changePassword')">
+                            <a-input-password v-model:value="accountForm.oldPassword"
+                                :placeholder="$t('user.currentPassword')" />
                         </a-form-item>
 
                         <a-form-item>
-                            <a-input-password v-model:value="accountForm.newPassword" placeholder="新密码" />
+                            <a-input-password v-model:value="accountForm.newPassword"
+                                :placeholder="$t('user.newPassword')" />
                         </a-form-item>
 
                         <a-form-item>
-                            <a-input-password v-model:value="accountForm.confirmPassword" placeholder="确认新密码" />
+                            <a-input-password v-model:value="accountForm.confirmPassword"
+                                :placeholder="$t('user.confirmPassword')" />
                         </a-form-item>
 
                         <a-form-item>
-                            <a-button type="primary" @click="saveAccount">保存修改</a-button>
+                            <a-button type="primary" @click="saveAccount">
+                                {{ $t('common.save') }}
+                            </a-button>
                         </a-form-item>
                     </a-form>
                 </a-tab-pane>
 
-                <a-tab-pane key="notification" tab="消息通知">
+                <a-tab-pane key="notification" :tab="$t('user.notifications')">
                     <a-list :data-source="notificationSettings">
                         <template #renderItem="{ item }">
                             <a-list-item>
-                                <a-list-item-meta :title="item.title" :description="item.description">
+                                <a-list-item-meta :title="$t(item.titleKey)" :description="$t(item.descriptionKey)">
                                     <template #avatar>
                                         <component :is="item.icon" />
                                     </template>
@@ -87,6 +96,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import {
     PlusOutlined,
@@ -96,6 +106,7 @@ import {
 } from '@ant-design/icons-vue'
 import PageContainer from '@/components/PageContainer.vue'
 
+const { t } = useI18n()
 const activeTab = ref('profile')
 const avatarList = ref([])
 
@@ -117,20 +128,20 @@ const accountForm = ref({
 
 const notificationSettings = ref([
     {
-        title: '系统通知',
-        description: '系统更新、维护等通知',
+        titleKey: 'notifications.system.title',
+        descriptionKey: 'notifications.system.description',
         icon: BellOutlined,
         enabled: true
     },
     {
-        title: '邮件通知',
-        description: '接收订阅更新、评论等邮件提醒',
+        titleKey: 'notifications.email.title',
+        descriptionKey: 'notifications.email.description',
         icon: MailOutlined,
         enabled: true
     },
     {
-        title: '评论通知',
-        description: '他人评论你的文章时通知',
+        titleKey: 'notifications.comment.title',
+        descriptionKey: 'notifications.comment.description',
         icon: MessageOutlined,
         enabled: true
     }
@@ -152,29 +163,29 @@ const locationOptions = [
 const beforeAvatarUpload = (file: File) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
     if (!isJpgOrPng) {
-        message.error('只能上传JPG/PNG格式的图片!')
+        message.error(t('common.messages.imageTypeError'))
     }
     const isLt2M = file.size / 1024 / 1024 < 2
     if (!isLt2M) {
-        message.error('图片必须小于2MB!')
+        message.error(t('common.messages.imageSizeError'))
     }
     return isJpgOrPng && isLt2M
 }
 
 const saveProfile = () => {
-    message.success('个人资料保存成功')
+    message.success(t('common.messages.saveSuccess'))
 }
 
 const saveAccount = () => {
     if (accountForm.value.newPassword !== accountForm.value.confirmPassword) {
-        message.error('两次输入的密码不一致')
+        message.error(t('common.messages.passwordMismatch'))
         return
     }
-    message.success('账号设置保存成功')
+    message.success(t('common.messages.saveSuccess'))
 }
 
 const verifyEmail = () => {
-    message.info('验证邮件已发送，请查收')
+    message.info(t('common.messages.emailSent'))
 }
 </script>
 

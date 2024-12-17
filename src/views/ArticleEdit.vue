@@ -1,22 +1,23 @@
 <template>
     <page-container>
         <a-card :bordered="false">
+            <template #title>{{ isEdit ? $t('article.editArticle') : $t('article.writeArticle') }}</template>
             <a-form :model="formState" layout="vertical">
-                <a-form-item label="文章标题" required>
-                    <a-input v-model:value="formState.title" placeholder="请输入文章标题" />
+                <a-form-item :label="$t('article.title')" required>
+                    <a-input v-model:value="formState.title" :placeholder="$t('article.title')" />
                 </a-form-item>
 
-                <a-form-item label="文章分类" required>
-                    <a-select v-model:value="formState.category" placeholder="请选择分类" :options="categories"
-                        allow-clear />
+                <a-form-item :label="$t('article.category')" required>
+                    <a-select v-model:value="formState.category" :placeholder="$t('category.allCategories')"
+                        :options="categories" allow-clear />
                 </a-form-item>
 
-                <a-form-item label="文章标签">
-                    <a-select v-model:value="formState.tags" mode="tags" placeholder="请输入标签" :options="tagOptions"
-                        allow-clear />
+                <a-form-item :label="$t('article.tags')">
+                    <a-select v-model:value="formState.tags" mode="tags" :placeholder="$t('article.tags')"
+                        :options="tagOptions" allow-clear />
                 </a-form-item>
 
-                <a-form-item label="封面图片">
+                <a-form-item :label="$t('article.coverImage')">
                     <a-upload v-model:file-list="fileList" list-type="picture-card" :before-upload="beforeUpload">
                         <div v-if="fileList.length < 1">
                             <plus-outlined />
@@ -25,14 +26,21 @@
                     </a-upload>
                 </a-form-item>
 
-                <a-form-item label="文章内容" required>
+                <a-form-item :label="$t('article.content')" required>
                     <markdown-editor v-model="formState.content" />
                 </a-form-item>
 
                 <a-form-item>
                     <a-space>
-                        <a-button type="primary" @click="handleSubmit">发布文章</a-button>
-                        <a-button @click="handleSaveDraft">保存草稿</a-button>
+                        <a-button type="primary" @click="handleSubmit">
+                            {{ $t('article.publish') }}
+                        </a-button>
+                        <a-button @click="handleSaveDraft">
+                            {{ $t('article.draft') }}
+                        </a-button>
+                        <a-button @click="$router.back()">
+                            {{ $t('common.cancel') }}
+                        </a-button>
                     </a-space>
                 </a-form-item>
             </a-form>
@@ -41,12 +49,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import type { UploadProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import PageContainer from '@/components/PageContainer.vue'
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
+
+const route = useRoute()
+const { t } = useI18n()
+
+const isEdit = computed(() => route.name === 'article-edit')
 
 const formState = ref({
     title: '',
@@ -71,14 +86,14 @@ const tagOptions = [
     { value: 'Node.js', label: 'Node.js' }
 ]
 
-const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+const beforeUpload = (file: File) => {
     const isImage = file.type.startsWith('image/')
     if (!isImage) {
-        message.error('只能上传图片文件!')
+        message.error(t('common.messages.imageTypeError'))
     }
     const isLt2M = file.size / 1024 / 1024 < 2
     if (!isLt2M) {
-        message.error('图片必须小于2MB!')
+        message.error(t('common.messages.imageSizeError'))
     }
     return isImage && isLt2M
 }

@@ -2,43 +2,7 @@
     <div class="article-container">
         <a-row :gutter="[24, 24]">
             <a-col :span="16">
-                <a-list class="article-list" :data-source="articles" item-layout="vertical" size="large"
-                    :pagination="pagination">
-                    <template #renderItem="{ item }">
-                        <a-list-item key="item.title">
-                            <template #extra>
-                                <img width="272" alt="封面" :src="item.cover" />
-                            </template>
-                            <a-list-item-meta :description="item.description">
-                                <template #title>
-                                    <router-link :to="`/articles/${item.id}`">{{ item.title }}</router-link>
-                                </template>
-                                <template #avatar>
-                                    <a-avatar :src="item.avatar" />
-                                </template>
-                            </a-list-item-meta>
-                            <div class="article-excerpt">{{ item.excerpt }}</div>
-                            <template #actions>
-                                <span>
-                                    <CalendarOutlined /> {{ item.date }}
-                                </span>
-                                <span>
-                                    <FolderOutlined />
-                                    <a :href="`/categories/${item.category}`">{{ item.category }}</a>
-                                </span>
-                                <span>
-                                    <TagsOutlined />
-                                    <span v-for="tag in item.tags" :key="tag">
-                                        <a-tag>{{ tag }}</a-tag>
-                                    </span>
-                                </span>
-                                <span>
-                                    <EyeOutlined /> {{ item.views }}
-                                </span>
-                            </template>
-                        </a-list-item>
-                    </template>
-                </a-list>
+                <article-list :articles="articles" :pagination="pagination" :loading="loading" />
             </a-col>
 
             <a-col :span="8">
@@ -83,6 +47,8 @@ import {
 
 const searchText = ref('')
 
+const loading = ref(false)
+
 const articles = ref([
     {
         id: 1,
@@ -126,7 +92,11 @@ const tags = ref([
 
 const pagination = {
     onChange: (page: number) => {
-        console.log(page)
+        loading.value = true
+        console.log('页码改变:', page)
+        setTimeout(() => {
+            loading.value = false
+        }, 1000)
     },
     pageSize: 10
 }

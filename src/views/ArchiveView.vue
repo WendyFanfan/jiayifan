@@ -2,10 +2,10 @@
     <div class="archive-container">
         <a-row :gutter="[24, 24]">
             <a-col :span="16">
-                <a-card :bordered="false">
+                <a-card :bordered="false" :loading="loading">
                     <template #title>
-                        <h2>文章归档</h2>
-                        <p class="subtitle">共计 {{ totalPosts }} 篇文章</p>
+                        <h2>{{ $t('archive.title') }}</h2>
+                        <p class="subtitle">{{ $t('archive.total', { count: totalPosts }) }}</p>
                     </template>
 
                     <a-timeline>
@@ -13,19 +13,17 @@
                             <template #dot>
                                 <CalendarOutlined style="font-size: 16px" />
                             </template>
-                            <h3 class="year-title">{{ year.year }} 年</h3>
+                            <h3 class="year-title">{{ year.year }} {{ $t('archive.year') }}</h3>
                             <a-timeline class="month-timeline">
                                 <a-timeline-item v-for="month in year.months" :key="month.month" color="gray">
-                                    <h4 class="month-title">{{ month.month }} 月</h4>
+                                    <h4 class="month-title">{{ month.month }} {{ $t('archive.month') }}</h4>
                                     <ul class="post-list">
                                         <li v-for="post in month.posts" :key="post.id">
                                             <span class="post-date">{{ post.date }}</span>
                                             <router-link :to="`/articles/${post.id}`" class="post-title">
                                                 {{ post.title }}
                                             </router-link>
-                                            <a-tag v-for="tag in post.tags" :key="tag" style="margin-left: 8px">
-                                                {{ tag }}
-                                            </a-tag>
+                                            <a-tag v-for="tag in post.tags" :key="tag">{{ tag }}</a-tag>
                                         </li>
                                     </ul>
                                 </a-timeline-item>
@@ -36,18 +34,20 @@
             </a-col>
 
             <a-col :span="8">
-                <a-card title="统计信息" :bordered="false">
+                <a-card :title="$t('archive.statistics')" :bordered="false">
                     <a-statistic-group>
-                        <a-statistic title="文章总数" :value="totalPosts" />
-                        <a-statistic title="分类总数" :value="totalCategories" />
-                        <a-statistic title="标签总数" :value="totalTags" />
+                        <a-statistic :title="$t('archive.totalArticles')" :value="totalPosts" />
+                        <a-statistic :title="$t('category.allCategories')" :value="totalCategories" />
+                        <a-statistic :title="$t('article.tags')" :value="totalTags" />
                     </a-statistic-group>
                 </a-card>
 
-                <a-card title="时间线" :bordered="false" style="margin-top: 16px">
+                <a-card :title="$t('archive.timeline')" :bordered="false" style="margin-top: 16px">
                     <a-timeline>
                         <a-timeline-item v-for="year in yearList" :key="year">
-                            <a href="#" @click.prevent="scrollToYear(year)">{{ year }} 年</a>
+                            <a href="#" @click.prevent="scrollToYear(year)">
+                                {{ year }} {{ $t('archive.year') }}
+                            </a>
                         </a-timeline-item>
                     </a-timeline>
                 </a-card>
@@ -59,7 +59,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { CalendarOutlined } from '@ant-design/icons-vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
+const loading = ref(true)
 const archives = ref([
     {
         year: 2024,
@@ -111,6 +113,10 @@ const archives = ref([
         ]
     }
 ])
+
+setTimeout(() => {
+    loading.value = false
+}, 1000)
 
 const totalPosts = computed(() => {
     return archives.value.reduce((total, year) => {
